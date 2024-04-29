@@ -2,3 +2,13 @@ _site/
 .bundle/
 vendor/
 Gemfile.lock
+
+.DS_Store
+node_modules
+/build
+/.svelte-kit
+/package
+.env
+.env.*
+!.env.example
+vite.config.js.timestamp-*
