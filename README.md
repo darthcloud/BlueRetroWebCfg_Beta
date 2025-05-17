@@ -7,6 +7,10 @@ More detail BlueRetro:\
 [Main hackaday.io page](https://hackaday.io/project/170365-blueretro)\
 [Software files repository](https://github.com/darthcloud/BlueRetro)
 
+## Creating additional presets
+Presets are located under:
+`static/config/presets`
+
 ## Developing
 
 Once you've created a project and installed dependencies with `pnpm install`, start a development server:
