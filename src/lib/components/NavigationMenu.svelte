@@ -31,7 +31,7 @@
 		</li>
 		<li class="flex flex-col">
 			<a onclick={onItemSelect} class={classesActive('/controller/n64')} href="{base}/controller/n64"
-				>N64 Controller Pack</a
+				>N64 Controller Pak</a
 			>
 		</li>
 		<li class="flex flex-col">
