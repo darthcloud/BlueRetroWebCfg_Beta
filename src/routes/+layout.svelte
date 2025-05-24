@@ -220,7 +220,7 @@
 							{/snippet}
 						</Modal>
 						{#if upgradeAvailable}
-							<a class="btn preset-tonal-tertiary border rounded-base border-tertiary-500" href="/system/update">
+							<a class="btn preset-tonal-tertiary border rounded-base border-tertiary-500" href="{base}/system/update">
 								Upgrade Available!
 								<IconDownload class="size-4" />
 							</a>
