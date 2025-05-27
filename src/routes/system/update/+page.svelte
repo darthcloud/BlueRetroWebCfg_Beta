@@ -126,7 +126,7 @@
 </script>
 
 <p>
-	Latest Verison: {$latestVersion} available at
+	Latest Version: {$latestVersion} available at
 	<a class="anchor" href="https://darthcloud.itch.io/blueretro">itch.io</a>
 </p>
 
