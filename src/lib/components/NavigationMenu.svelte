@@ -39,6 +39,11 @@
 				>DC VMU Manager</a
 			>
 		</li>
+		<li class="flex flex-col">
+			<a onclick={onItemSelect} class={classesActive('/controller/ps1mc')} href="{base}/controller/ps1mc"
+				>PS1 Memory Card</a
+			>
+		</li>
 		<p class="font-bold text-xl">Button Mappings</p>
 		<li class="flex flex-col">
 			<a
