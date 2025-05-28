@@ -1,9 +1,10 @@
-import { brUuid, cfg_cmd_get_fw_name } from "$lib/constants";
+import { cfg_cmd_get_fw_name } from "$lib/constants";
 import type { IDeviceConfig } from "$lib/interfaces";
+import { getCharacteristic } from ".";
 
 const getAppVersion = async (service: BluetoothRemoteGATTService) => {
     console.log('Reading App version...');
-    const charactristics = await service.getCharacteristic(brUuid[9]);
+    const charactristics = await getCharacteristic(service, 9);
     let enc = new TextDecoder('utf-8');
     let app_ver = enc.decode(await charactristics.readValue());
     console.log('App Version: ', app_ver);
@@ -13,7 +14,7 @@ const getAppVersion = async (service: BluetoothRemoteGATTService) => {
 const getAppName = async (service: BluetoothRemoteGATTService, command: number) => {
     console.log('Reading App Name...');
     var cmd = new Uint8Array(1);
-    var cmd_chrc = await service.getCharacteristic(brUuid[7]);
+    var cmd_chrc = await getCharacteristic(service, 7);
     cmd[0] = command;
     await cmd_chrc.writeValue(cmd);
     const dataview = await cmd_chrc.readValue();
@@ -25,7 +26,7 @@ const getAppName = async (service: BluetoothRemoteGATTService, command: number) 
 
 const getBdAddr = async (service: BluetoothRemoteGATTService) => {
     console.log('Reading Bluetooth Address...');
-    const charactristics = await service.getCharacteristic(brUuid[12]);
+    const charactristics = await getCharacteristic(service, 12);
     const dataview = await charactristics.readValue();
     let address =
         dataview.getUint8(5).toString(16).padStart(2, '0') +
@@ -51,9 +52,9 @@ const getDeviceConfiguration = async (s: BluetoothRemoteGATTService) => {
         bluetoothAddress,
         appVersion
     };
-
     const app_ver_is_18x = appVersion.indexOf('v1.8') != -1;
     const app_ver_bogus = appVersion.indexOf('v') == -1;
+
     if (!app_ver_is_18x && !app_ver_bogus) {
         config.appName = await getAppName(s, cfg_cmd_get_fw_name);
         console.log(

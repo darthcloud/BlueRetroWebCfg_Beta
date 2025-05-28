@@ -8,7 +8,7 @@
 		cfg_cmd_get_file,
 		cfg_cmd_open_dir
 	} from '$lib/constants';
-	import { getGameName, getService, toaster } from '$lib/utilities';
+	import { getGameName, getService, toaster, getCharacteristic } from '$lib/utilities';
 	import { device, deviceConfig, isFullyInitialized } from '$lib/stores';
 	import { IconTrash } from '@tabler/icons-svelte';
 	import type { IBlueRetroFile } from '$lib/interfaces';
@@ -40,7 +40,7 @@
 	const deleteFileCmd = async (filename: string) => {
 		const serv = await getService();
 		var cmd = new Uint8Array([cfg_cmd_del_file]);
-		const chrc = await serv.getCharacteristic(brUuid[7]);
+		const chrc = await getCharacteristic(serv, 7);
 		let enc = new TextEncoder();
 		let file = enc.encode(filename);
 		let combined = new Uint8Array([...cmd, ...file]);
@@ -71,7 +71,7 @@
 			const serv = await getService();
 			if (serv) {
 				var cmd = new Uint8Array([cfg_cmd_open_dir]);
-				const cmd_chrc = await serv.getCharacteristic(brUuid[7]);
+				const cmd_chrc = await getCharacteristic(serv, 7);
 				await cmd_chrc.writeValue(cmd);
 				cmd[0] = cfg_cmd_get_file;
 				await cmd_chrc.writeValue(cmd);

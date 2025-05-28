@@ -6,7 +6,7 @@
 		cfg_cmd_sys_reset
 	} from '$lib/constants';
 	import { isFullyInitialized } from '$lib/stores';
-	import { getService, toaster } from '$lib/utilities';
+	import { getService, toaster, getCharacteristic } from '$lib/utilities';
 	import { ProgressRing } from '@skeletonlabs/skeleton-svelte';
 
 	let isDoingSomething = $state(false);
@@ -19,11 +19,11 @@
 		isSettingDeepSleep = true;
 		try {
 			const serv = await getService();
-			const chrc = await serv.getCharacteristic(brUuid[7]);
+			const chrc = await getCharacteristic(serv, 7);
 			await chrc.writeValue(new Uint8Array([cfg_cmd_sys_deep_sleep]));
 			toaster.success({ title: `Success puting device to sleep.`});
 		} catch (error) {
-			toaster.error({ title: `Hardware and firmware mismatch!`});
+			toaster.error({ title: `Error putting device to sleep!`});
 			console.log('error putting device to sleep', error);
 		}
 		isSettingDeepSleep = false;
@@ -35,7 +35,7 @@
 		isResetting = true;
 		try {
 			const serv = await getService();
-			const chrc = await serv.getCharacteristic(brUuid[7]);
+			const chrc = await getCharacteristic(serv, 7);
 			await chrc.writeValue(new Uint8Array([cfg_cmd_sys_reset]));
 			toaster.success({ title: `Success resetting the device.`});
 		} catch (error) {
@@ -51,7 +51,7 @@
 		isFactoryResetting = true;
 		try {
 			const serv = await getService();
-			const chrc = await serv.getCharacteristic(brUuid[7]);
+			const chrc = await getCharacteristic(serv, 7);
 			await chrc.writeValue(new Uint8Array([cfg_cmd_sys_factory]));
 			toaster.success({ title: `Success factory resetting the device.`});
 		} catch (error) {

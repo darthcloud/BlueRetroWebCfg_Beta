@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { FileUpload } from '@skeletonlabs/skeleton-svelte';
 	import { block, brUuid, mtu, pakSize } from '$lib/constants';
-	import { downloadFile, toaster, getService } from '$lib/utilities';
+	import { downloadFile, toaster, getService, getCharacteristic } from '$lib/utilities';
 	import { isFullyInitialized, device } from '$lib/stores';
 	import { ActivityProgress } from '$lib/components';
 	import { IconUpload, IconX } from '@tabler/icons-svelte';
@@ -97,9 +97,9 @@
 		const serv = await getService();
 		var data = new Uint8Array(pakSize);
 		var offset = new Uint32Array([Number(pak) * pakSize]);
-		let ctrl_chrc = await serv.getCharacteristic(brUuid[10]);
+		let ctrl_chrc = await getCharacteristic(serv, 10);
 		await ctrl_chrc.writeValue(offset);
-		const chrc = await serv.getCharacteristic(brUuid[11]);
+		const chrc = await getCharacteristic(serv, 11);
 		await n64ReadFileRecursive(chrc, data, 0);
 		offset[0] = 0;
 		await ctrl_chrc.writeValue(offset);
@@ -131,10 +131,10 @@
 
 	const n64WriteFile = async (data: ArrayBuffer, pak: number) => {
 		const serv = await getService();
-		const chrc = await serv.getCharacteristic(brUuid[10]);
+		const chrc = await getCharacteristic(serv, 10);
 		const offset = new Uint32Array([Number(pak) * pakSize]);
 		await chrc.writeValue(offset);
-		const chrc2 = await serv.getCharacteristic(brUuid[11]);
+		const chrc2 = await getCharacteristic(serv, 11);
 		await n64WriteRecursive(chrc2, data, 0);
 		offset[0] = 0;
 		await chrc.writeValue(offset);

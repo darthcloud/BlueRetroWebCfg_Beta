@@ -73,6 +73,9 @@ const getService = async (retry: number = 0, cancellationToken?: ICancellationTo
 
         }
     }
+    if(dev) {
+        dev.gatt?.disconnect();
+    }
     deviceConfig.set(undefined);
     device.set(undefined);
     service.set(undefined);

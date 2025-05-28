@@ -7,7 +7,7 @@
 		brUuid
 	} from '$lib/constants';
 	import type { IGlobalConfig } from '$lib/interfaces';
-	import { getService, toaster } from '$lib/utilities';
+	import { getService, toaster, getCharacteristic } from '$lib/utilities';
 	import { ProgressRing } from '@skeletonlabs/skeleton-svelte';
 
 	let system: number = $state(0);
@@ -20,7 +20,7 @@
 	const getApiVersion = async () => {
 		console.log('Reading Api version...');
 		const serv = await getService();
-		const characteristics = await serv.getCharacteristic(brUuid[6]);
+		const characteristics = await getCharacteristic(serv, 6);
 		const dataview = await characteristics.readValue();
 		return dataview.getUint8(0);
 	};
@@ -29,7 +29,7 @@
 		isDoingSomething = true;
 		try {
 			const serv = await getService();
-			const charactristic = await serv.getCharacteristic(brUuid[1]);
+			const charactristic = await getCharacteristic(serv, 1);
 			const dataview = await charactristic.readValue();
 
 			const globalConfig: IGlobalConfig = {
@@ -90,7 +90,7 @@
 					globalConfig[3] = bank;
 				}
 				const serv = await getService();
-				const chrc = await serv.getCharacteristic(brUuid[1]);
+				const chrc = await getCharacteristic(serv, 1);
 				await chrc.writeValue(globalConfig);
 
 				deviceConfig.update((c) => ({

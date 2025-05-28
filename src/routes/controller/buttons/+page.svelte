@@ -6,7 +6,7 @@
 	import { IconPlus, IconDeviceFloppy } from '@tabler/icons-svelte';
 	import { maxMainInput, labelName as deviceLabels, brUuid, maxMappings } from '$lib/constants';
 	import { isFullyInitialized } from '$lib/stores';
-	import { getService, toaster, writeInputConfig } from '$lib/utilities';
+	import { getService, toaster, writeInputConfig, getCharacteristic } from '$lib/utilities';
 	import { ProgressRing, Switch } from '@skeletonlabs/skeleton-svelte';
 
 	let source: number = $state(0);
@@ -107,8 +107,8 @@
 	const readInputConfiguration = async (inputNumber: number) => {
 		const serv = await getService();
 		const config = new Uint8Array(2051);
-		const ctrl_chrc = await serv.getCharacteristic(brUuid[4]);
-		const data_chrc = await serv.getCharacteristic(brUuid[5]);
+		const ctrl_chrc = await getCharacteristic(serv, 4);
+		const data_chrc = await getCharacteristic(serv, 5);
 		const inputCtrl = new Uint16Array([inputNumber, 0]);
 		return await readRecursive(config, inputCtrl, ctrl_chrc, data_chrc);
 	};

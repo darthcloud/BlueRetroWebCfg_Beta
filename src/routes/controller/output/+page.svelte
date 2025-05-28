@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { service, isFullyInitialized } from '$lib/stores';
 	import { devCfg as outputModes, accCfg as accessories, maxOutput, brUuid } from '$lib/constants';
-	import { getService, toaster } from '$lib/utilities';
+	import { getService, toaster, getCharacteristic } from '$lib/utilities';
 	import { ProgressRing } from '@skeletonlabs/skeleton-svelte';
 
 	let output: number = $state(0);
@@ -13,10 +13,10 @@
 		isDoingSomething = true;
 		try {
 			const serv = await getService();
-			let chrc = await serv.getCharacteristic(brUuid[2]);
+			let chrc = await getCharacteristic(serv, 2);
 			await chrc.writeValue(new Uint16Array([output]));
 
-			chrc = await serv.getCharacteristic(brUuid[3]);
+			chrc = await getCharacteristic(serv, 3);
 			const value = await chrc.readValue();
 
 			mode = value.getUint8(0);
@@ -36,12 +36,12 @@
 		isDoingSomething = true;
 		try {
 			var data = new Uint8Array([mode, accessory]);
-			let chrc = await serv.getCharacteristic(brUuid[2]);
+			let chrc = await getCharacteristic(serv, 2);
 
 			var outputCtrl = new Uint16Array([output]);
 			await chrc.writeValue(outputCtrl);
 
-			chrc = await serv.getCharacteristic(brUuid[3]);
+			chrc = await getCharacteristic(serv, 3);
 			await chrc.writeValue(data);
 			toaster.success({ title: `Success updating output ${output + 1}`});
 		} catch (error) {

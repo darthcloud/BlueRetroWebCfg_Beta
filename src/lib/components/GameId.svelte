@@ -6,7 +6,7 @@
 		cfg_cmd_set_gameid_cfg
 	} from '$lib/constants';
 	import { deviceConfig, isFullyInitialized } from '$lib/stores';
-	import { getGameId, getGameName, toaster, getService } from '$lib/utilities';
+	import { getGameId, getGameName, toaster, getService, getCharacteristic } from '$lib/utilities';
 	import { Segment, Tooltip } from '@skeletonlabs/skeleton-svelte';
 	import { IconInfoCircle, IconRefresh } from '@tabler/icons-svelte';
 
@@ -30,7 +30,7 @@
 
 	const getConfigSource = async (): Promise<ControllerConfigType> => {
 		const serv = await getService();
-		const cmd_chrc = await serv.getCharacteristic(brUuid[7]);
+		const cmd_chrc = await getCharacteristic(serv, 7);
 		await cmd_chrc.writeValue(new Uint8Array([cfg_cmd_get_cfg_src]));
 		const value = await cmd_chrc.readValue();
 		return value.getUint8(0) === 0 ? 'global' : 'gameid';
@@ -38,7 +38,7 @@
 
 	const setConfig = async (configValue: number) => {
 		const serv = await getService();
-		const chrc = await serv.getCharacteristic(brUuid[7]);
+		const chrc = await getCharacteristic(serv, 7);
 		await chrc.writeValue(new Uint8Array([configValue]));
 	};
 

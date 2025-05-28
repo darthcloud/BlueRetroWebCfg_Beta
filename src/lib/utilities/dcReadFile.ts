@@ -1,4 +1,5 @@
-import { brUuid, vmuSize } from "$lib/constants.js";
+import { vmuSize } from "$lib/constants.js";
+import { getCharacteristic } from ".";
 
 
 const dcReadFile = async (
@@ -9,13 +10,13 @@ const dcReadFile = async (
     var data = new Uint8Array(vmuSize);
    
     const offset = new Uint32Array(1);
-    let ctrl_chrc = await service.getCharacteristic(brUuid[10]);
+    let ctrl_chrc = await getCharacteristic(service, 10);
     offset[0] = 0;
     await ctrl_chrc.writeValue(offset);
-    const chrc = await service.getCharacteristic(brUuid[11]);
+    const chrc = await getCharacteristic(service, 11);
     await dcReadFileRecursive(chrc, data, 0, setProgress, cancellationToken);
     offset[0] = 0;
-    await ctrl_chrc.writeValue(offset);
+    await ctrl_chrc!.writeValue(offset);
 
     return data;
   };

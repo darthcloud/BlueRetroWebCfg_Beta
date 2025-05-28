@@ -1,4 +1,4 @@
-import { brUuid } from "$lib/constants";
+import { getCharacteristic } from ".";
 
 const presetWriteRecursive = async (
 	cfg: Uint8Array,
@@ -20,8 +20,8 @@ const presetWriteRecursive = async (
 }
 
 const writeInputConfig = async (input: number, cfg: Uint8Array, service: BluetoothRemoteGATTService) => {
-	let ctrl_chrc = await service!.getCharacteristic(brUuid[4]);
-	const data_chrc = await service!.getCharacteristic(brUuid[5]);
+	let ctrl_chrc = await getCharacteristic(service, 4);
+	const data_chrc = await getCharacteristic(service, 5);
 	const inputCtrl = new Uint16Array([input, 0]);
 	await presetWriteRecursive(cfg, inputCtrl, ctrl_chrc, data_chrc);
 }

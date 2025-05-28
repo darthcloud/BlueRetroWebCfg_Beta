@@ -6,6 +6,7 @@ import { getGameName } from "./getGameName";
 import { getService } from "./getService";
 import { writeInputConfig } from "./writeInputConfig";
 import { toaster } from "./toaster-svelte";
+import { getCharacteristic } from "./getCharacteristic";
 
 export { 
     getService, 
@@ -15,5 +16,6 @@ export {
     getGameId, 
     getDeviceConfiguration, 
     getDevice, 
-    toaster
+    toaster,
+    getCharacteristic
 }

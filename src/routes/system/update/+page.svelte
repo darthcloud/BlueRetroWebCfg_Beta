@@ -1,6 +1,5 @@
 <script lang="ts">
 	import {
-		brUuid,
 		cfg_cmd_ota_abort,
 		cfg_cmd_ota_end,
 		cfg_cmd_ota_start,
@@ -8,7 +7,7 @@
 	} from '$lib/constants';
 	import { device, deviceConfig, service, isFullyInitialized, latestVersion } from '$lib/stores';
 	import { FileUpload } from '@skeletonlabs/skeleton-svelte';
-	import { toaster, getService } from '$lib/utilities';
+	import { toaster, getService, getCharacteristic } from '$lib/utilities';
 	import { ActivityProgress } from '$lib/components';
 	import { IconUpload, IconX } from '@tabler/icons-svelte';
 
@@ -21,7 +20,9 @@
 	
 
 	let isHw2 =
-		$derived($deviceConfig?.appVersion?.indexOf('hw2') != -1 || $deviceConfig?.appName?.indexOf('hw2') != -1);
+		$derived(($deviceConfig?.appVersion?.includes('hw2') ?? false) || ($deviceConfig?.appName?.includes('hw2') || false));
+
+	$effect(() => console.log({ isHw2 }));
 
 	const otaWriteFwRecursive = async (
 		chrc: BluetoothRemoteGATTCharacteristic,
@@ -51,9 +52,9 @@
 		let characteristics: BluetoothRemoteGATTCharacteristic | undefined = undefined;
 
 		try {
-			characteristics = await service.getCharacteristic(brUuid[7]);
+			characteristics = await getCharacteristic(service, 7);
 			characteristics.writeValue(cmd);
-			const chrc = await service.getCharacteristic(brUuid[8]);
+			const chrc = await getCharacteristic(service, 8);
 			await otaWriteFwRecursive(chrc, data, 0);
 			cmd[0] = cfg_cmd_ota_end;
 			await characteristics.writeValue(cmd);

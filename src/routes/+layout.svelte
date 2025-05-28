@@ -1,6 +1,6 @@
 <script lang="ts">
 	import '../app.css';
-	import { Toaster, ProgressRing, Modal, Progress } from '@skeletonlabs/skeleton-svelte';
+	import { Toaster, Modal } from '@skeletonlabs/skeleton-svelte';
 	import {
 		IconBrandGithub,
 		IconBrandDiscord,
@@ -8,7 +8,7 @@
 		IconBluetoothConnected,
 		IconDownload
 	} from '@tabler/icons-svelte';
-	import { deviceConfig, device, service, latestVersion } from '$lib/stores';
+	import { deviceConfig, device, service, latestVersion, isFullyInitialized } from '$lib/stores';
 	import { NavigationMenu, ActivityProgress } from '$lib/components';
 	import { getService, toaster } from '$lib/utilities';
 	import { urlLatestRelease } from '$lib/constants';
@@ -28,6 +28,9 @@
 	let cancellationToken: ICancellationToken = $state({ isCanceled: false })
 
 	const unselectDevice = () => {
+		if ($device?.gatt?.connected) {
+			$device.gatt.disconnect();
+		}
 		device.set(undefined);
 		deviceConfig.set(undefined);
 		service.set(undefined);
@@ -66,9 +69,6 @@
 	const onSwitchDeviceClick = async () => {
 		isIntentionallyDisconnecting = true;
 		cancellationToken.isCanceled = false;
-		if ($device?.gatt?.connected) {
-			$device.gatt.disconnect();
-		}
 		unselectDevice();
 		await initializeDevice();
 		isConnectedModalOpen = false;
@@ -77,17 +77,14 @@
 	const onDisconnectClick = async () => {
 		isIntentionallyDisconnecting = true;
 		cancellationToken.isCanceled = false;
-		if ($device?.gatt?.connected) {
-			$device.gatt.disconnect();
-		}
 		unselectDevice();
 		isConnectedModalOpen = false;
 	};
 
-	const onDisconnectedListener = async (_: Event) => {
+	const onDisconnectedListener = async (e: Event) => {
 		if(isIntentionallyDisconnecting) {
 			isIntentionallyDisconnecting = false;
-		} else if(!isIntentionallyDisconnecting && $device) {
+		} else if(!isIntentionallyDisconnecting && $isFullyInitialized) {
 			toaster.error({ title: 'The connection to the BlueRetro device was lost. Attempting to reestablish a connection' });
 			deviceConfig.set(undefined);
 			service.set(undefined);
@@ -107,8 +104,11 @@
 	}
 
 	$effect(() => {
-		$device?.addEventListener('gattserverdisconnected', onDisconnectedListener)
-	})
+		if($isFullyInitialized) {
+			$device?.addEventListener('gattserverdisconnected', onDisconnectedListener);
+		}
+		
+	});
 </script>
 
 <Modal
