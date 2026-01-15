@@ -128,7 +128,7 @@
 
 <p>
 	Latest Version: {$latestVersion} available at
-	<a class="anchor" href="https://darthcloud.itch.io/blueretro">itch.io</a>
+	<a class="anchor" href="https://github.com/darthcloud/BlueRetro/releases">GitHub</a>
 </p>
 
 <div class="flex md:flex-row gap-4 md:items-center flex-col">
